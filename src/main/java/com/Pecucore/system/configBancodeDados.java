@@ -28,7 +28,7 @@ public class configBancodeDados {
         adapter.setDatabase(Database.POSTGRESQL);
         adapter.setShowSql(true);
         adapter.setGenerateDdl(true);
-        adapter.setDatabasePlatform("org.hibernate.dialect.PosgreSQLDialetc");
+        adapter.setDatabasePlatform("org.hibernate.dialect.PostgreSQLDialect");
         adapter.setPrepareConnection(true);
         return adapter;
     }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDate;
 
 @Entity
 @Table(name="animal")
@@ -13,42 +14,60 @@ public class Animal implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-
-    private int idade;
-    private String nome;
-    private String tipo;
-    private double peso;
+    private Long id;
 
 
-    public String getNome() {
-        return nome;
+    //ANIMAL
+
+    private int brinco;
+    private LocalDate dataNascimento;
+    private double pesoInicial;
+    private int lote;
+    private String sexo;
+
+
+    public int getLote() {
+        return lote;
     }
 
-    public int getIdade() {
-        return idade;
+    public int getBrinco() {
+        return brinco;
     }
 
-    public String getTipo() {
-        return tipo;
+    public String getSexo() {
+        return sexo;
     }
 
-    public double getPeso() {
-        return peso;
+    ;
+
+    public LocalDate getDataNascimento() {
+        return dataNascimento;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public double getPesoInicial() {
+        return pesoInicial;
     }
 
-    public void setIdade(int idade) {
-        this.idade = idade;
+    public void setBrinco(int brinco) {
+        this.brinco = brinco;
     }
 
-    public void setPeso(double peso) {
-        this.peso = peso;
+    public void setDataNascimento(LocalDate dataNascimento) {
+        this.dataNascimento = dataNascimento;
     }
 
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
+    public void setPesoInicial(double pesoInicial) {
+        this.pesoInicial = pesoInicial;
+    }
+
+    public void setLote(int lote) {
+        this.lote = lote;
+    }
+
+    public void setSexo(String sexo) {
+        this.sexo = sexo;
     }
 }
+
+
+
