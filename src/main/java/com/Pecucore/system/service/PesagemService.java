@@ -14,6 +14,7 @@ import com.Pecucore.system.model.Animal;
 import com.Pecucore.system.model.Pesagem;
 import com.Pecucore.system.repository.AnimalRepository;
 import com.Pecucore.system.repository.PesagemRepository;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
@@ -38,24 +39,28 @@ public class PesagemService {
     @EventListener
     @Transactional
     public void handlePesoAnimalAlterado(PesoAnimalAlteradoEvento evento) {
-        create(new PesagemRequestDTO(evento.animalId(), evento.pesoKg(), evento.data()));
+        Animal animal = animalService.getAnimalAtivoById(evento.animalId());
+        registrar(animal, evento.pesoKg(), evento.data());
     }
 
     @Transactional
     public ResultadoPesagem create(PesagemRequestDTO dados) {
+        Animal animal = animalService.getAnimalAtivoByBrinco(dados.brinco());
+        return registrar(animal, dados.pesoAtual(), dados.dataPesagem());
+    }
 
-        Animal animal = animalService.getAnimalAtivoById(dados.animalId());
+    private ResultadoPesagem registrar(Animal animal, double pesoKg, LocalDate dataPesagem) {
 
-        if (animal.getDataNascimento() != null && dados.dataPesagem().isBefore(animal.getDataNascimento())) {
+        if (animal.getDataNascimento() != null && dataPesagem.isBefore(animal.getDataNascimento())) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
                     "A data da pesagem não pode ser anterior à data de nascimento do animal"
             );
         }
 
-        Pesagem ultimaPesagem = pesagemRepository.findTopByAnimalIdOrderByDataDescIdDesc(dados.animalId()).orElse(null);
+        Pesagem ultimaPesagem = pesagemRepository.findTopByAnimalIdOrderByDataDescIdDesc(animal.getId()).orElse(null);
 
-        if(ultimaPesagem != null && dados.dataPesagem().isBefore(ultimaPesagem.getData())){
+        if(ultimaPesagem != null && dataPesagem.isBefore(ultimaPesagem.getData())){
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
                     "A data da pesagem não pode ser anterior à última pesagem registrada"
@@ -66,7 +71,7 @@ public class PesagemService {
         if(ultimaPesagem !=null) {
             long diasEntrePesagens = ChronoUnit.DAYS.between(
                     ultimaPesagem.getData(),
-                    dados.dataPesagem()
+                    dataPesagem
             );
 
             if(diasEntrePesagens > intervaloRecomendadoDias){
@@ -75,32 +80,27 @@ public class PesagemService {
             }
         }
 
-        Double gmd = gmdService.calculateGmd(ultimaPesagem, dados.pesoAtual(), dados.dataPesagem());
+        Double gmd = gmdService.calculateGmd(ultimaPesagem, pesoKg, dataPesagem);
 
         Pesagem pesagem = new Pesagem();
 
-        pesagem.setPesoKg(dados.pesoAtual());
+        pesagem.setPesoKg(pesoKg);
         pesagem.setGmdCalculado(gmd);
-        pesagem.setData(dados.dataPesagem());
+        pesagem.setData(dataPesagem);
         pesagem.setAnimal(animal);
 
-        animal.setPesoAtual(dados.pesoAtual());
+        animal.setPesoAtual(pesoKg);
 
         pesagemRepository.save(pesagem);
         animalRepository.save(animal);
 
         return new ResultadoPesagem(pesagem, aviso);
     }
-    
-    public List<Pesagem> getHistorico(Long animalId) {
 
-        if (!animalRepository.existsById(animalId)) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    "Animal não encontrado"
-            );
-        }
+    public List<Pesagem> getHistorico(int brinco) {
 
-        return pesagemRepository.findByAnimalIdOrderByDataAscIdAsc(animalId);
+        Animal animal = animalService.getAnimalByBrinco(brinco);
+
+        return pesagemRepository.findByAnimalIdOrderByDataAscIdAsc(animal.getId());
     }
 }

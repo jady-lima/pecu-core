@@ -133,14 +133,29 @@ public class AnimalService {
                 ));
     }
 
-    public Animal getAnimalAtivoById(Long id) {
+    public Animal getAnimalByBrinco(int brinco) {
 
-        Animal animal = getAnimalById(id);
+        return animalRepository.findByBrinco(brinco)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Animal não encontrado"
+                ));
+    }
+
+    public Animal getAnimalAtivoById(Long id) {
+        return validarAtivo(getAnimalById(id));
+    }
+
+    public Animal getAnimalAtivoByBrinco(int brinco) {
+        return validarAtivo(getAnimalByBrinco(brinco));
+    }
+
+    private Animal validarAtivo(Animal animal) {
 
         if (animal.getStatus() != StatusAnimal.ATIVO) {
             throw new ResponseStatusException(
-                HttpStatus.CONFLICT, 
-                "Não é possível registrar eventos para um animal que não está ativo"
+                    HttpStatus.CONFLICT,
+                    "Não é possível registrar eventos para um animal que não está ativo"
             );
         }
 

@@ -40,14 +40,14 @@ public class PesagemController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new PesagemResponseDTO(resultado.pesagem(), resultado.aviso()));
     }
 
-    @GetMapping("/animal/{animalId}")
+    @GetMapping("/animal/{brinco}")
     @Operation(summary = "Listar histórico de pesagens do animal") 
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Histórico encontrado com sucesso"),
         @ApiResponse(responseCode = "404", description = "Animal não encontrado")
     })
-    public ResponseEntity<List<PesagemResponseDTO>> getHistorico( @Parameter(description = "ID do animal", example = "1") @PathVariable Long animalId) {
-        List<Pesagem> pesagens = pesagemService.getHistorico(animalId);
+    public ResponseEntity<List<PesagemResponseDTO>> getHistorico( @Parameter(description = "Brinco do animal", example = "1001") @PathVariable Integer brinco) {
+        List<Pesagem> pesagens = pesagemService.getHistorico(brinco);
         List<PesagemResponseDTO> dtos = pesagens.stream().map(PesagemResponseDTO::new).toList();
         return ResponseEntity.ok(dtos);
     }

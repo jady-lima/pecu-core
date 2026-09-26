@@ -6,7 +6,7 @@ import java.time.LocalDate;
 
 public record PesagemResponseDTO(
         Long id,
-        Long animalId,
+        int brinco,
         double peso,
         LocalDate dataPesagem,
         Double gmdCalculado,
@@ -20,7 +20,7 @@ public record PesagemResponseDTO(
     public PesagemResponseDTO(Pesagem pesagem, String aviso) {
         this(
                 pesagem.getId(),
-                pesagem.getAnimal().getId(),
+                pesagem.getAnimal().getBrinco(),
                 pesagem.getPesoKg(),
                 pesagem.getData(),
                 pesagem.getGmdCalculado(),
