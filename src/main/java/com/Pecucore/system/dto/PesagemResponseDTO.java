@@ -17,7 +17,7 @@ public record PesagemResponseDTO(
                         pesagem.getId(),
                         pesagem.getAnimal().getId(),
                         pesagem.getPeso(),
-                        pesagem.getDataPesagem()
+                        pesagem.getData()
 
                 );
     }
