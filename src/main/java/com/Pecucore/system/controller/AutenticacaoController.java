@@ -29,20 +29,16 @@ public class AutenticacaoController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+    
     @Autowired
     private TokenService tokenService;
 
     @PostMapping("/login")
-    @Operation(
-            summary = "Realizar login",
-            description = "Autentica o usuário e retorna um token JWT."
-    )
+    @Operation(summary = "Realizar login")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Login realizado com sucesso", content = @Content(schema = @Schema(implementation = TokenResponseDTO.class))),
-            @ApiResponse(responseCode = "400", description = "Dados inválidos"),
-            @ApiResponse(responseCode = "401", description = "Usuário ou senha inválidos", content = @Content(
-                    schema = @Schema(implementation = ErroResponseDTO.class)
-            ))
+        @ApiResponse(responseCode = "200", description = "Login realizado com sucesso", content = @Content(schema = @Schema(implementation = TokenResponseDTO.class))),
+        @ApiResponse(responseCode = "400", description = "Dados inválidos"),
+        @ApiResponse(responseCode = "401", description = "Usuário ou senha inválidos", content = @Content(schema = @Schema(implementation = ErroResponseDTO.class)))
     })
     public ResponseEntity<TokenResponseDTO> login(@RequestBody @Valid LoginRequestDTO dadosLogin) {
         var authToken = new UsernamePasswordAuthenticationToken(dadosLogin.username(), dadosLogin.senha());
@@ -52,14 +48,11 @@ public class AutenticacaoController {
     }
 
     @GetMapping("/me")
-    @Operation(
-            summary = "Buscar usuário autenticado",
-            description = "Retorna os dados do usuário atualmente autenticado."
-    )
+    @Operation(summary = "Buscar usuário autenticado")
     @SecurityRequirement(name = "bearerAuth")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Usuário autenticado encontrado com sucesso"),
-            @ApiResponse(responseCode = "401", description = "Usuário não autenticado")
+        @ApiResponse(responseCode = "200", description = "Usuário autenticado encontrado com sucesso"),
+        @ApiResponse(responseCode = "401", description = "Usuário não autenticado")
     })
     public ResponseEntity<UsuarioResponseDTO> me(@AuthenticationPrincipal Usuario usuario) {
         return ResponseEntity.ok(new UsuarioResponseDTO(usuario));

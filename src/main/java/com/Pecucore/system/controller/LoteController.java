@@ -3,7 +3,6 @@ package com.Pecucore.system.controller;
 import com.Pecucore.system.dto.LoteResponseDTO;
 import com.Pecucore.system.dto.LoteRequestDTO;
 import com.Pecucore.system.model.Lote;
-import com.Pecucore.system.model.Propriedade;
 import com.Pecucore.system.service.LoteService;
 
 
@@ -11,11 +10,13 @@ import jakarta.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping("/lotes")
 public class LoteController {

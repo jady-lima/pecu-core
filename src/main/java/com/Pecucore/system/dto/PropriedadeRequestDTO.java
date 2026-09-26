@@ -8,6 +8,8 @@ public record PropriedadeRequestDTO(
         String nome,
 
         @NotBlank(message ="A Localização deve ser informada")
-        String localizacao
+        String localizacao,
+
+        Long usuarioId
 ) {
 }

@@ -25,8 +25,6 @@ public class Animal {
     @Enumerated(EnumType.STRING)
     private StatusAnimal status;
 
-
-
     public Long getId(){return id;}
 
     public int getBrinco() {

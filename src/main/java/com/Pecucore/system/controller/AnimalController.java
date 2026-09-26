@@ -6,6 +6,7 @@ import com.Pecucore.system.dto.AnimalStatusRequestDTO;
 import com.Pecucore.system.model.Animal;
 import com.Pecucore.system.service.AnimalService;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 
 import java.util.List;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@SecurityRequirement (name = "bearerAuth")
 @RestController
 @RequestMapping("/animais")
 public class AnimalController {
