@@ -2,6 +2,7 @@ package com.Pecucore.system.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Positive;
 
 import java.time.LocalDate;
@@ -16,6 +17,7 @@ public record PesagemRequestDTO(
         Double pesoAtual,
 
         @NotNull(message = "A data da pesagem precisa ser informada!!")
+        @PastOrPresent(message = "A data da pesagem não pode ser uma data futura")
         LocalDate dataPesagem
 
 ) {

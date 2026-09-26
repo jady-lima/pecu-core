@@ -40,12 +40,19 @@ public class PesagemService {
                     "Não é possivel registrar pesagem para um animal que não está ativo"
             );
         }
+        if (animal.getDataNascimento() != null && dados.dataPesagem().isBefore(animal.getDataNascimento())) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "A data da pesagem não pode ser anterior à data de nascimento do animal"
+            );
+        }
+
         Pesagem ultimaPesagem = pesagemRepository.findTopByAnimalIdOrderByDataDesc(dados.animalId()).orElse(null);
 
         if(ultimaPesagem != null && dados.dataPesagem().isBefore(ultimaPesagem.getData())){
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
-                    "A data da pesagem não pode ser anterior á ultima pesagem registrada"
+                    "A data da pesagem não pode ser anterior à última pesagem registrada"
             );
         }
 
