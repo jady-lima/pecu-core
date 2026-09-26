@@ -17,7 +17,7 @@ public class Propriedade {
     public String getLocalizacao(){return localizacao;}
     public long getId(){return id;}
 
-    public void setNome(String nome){this.localizacao = nome;}
-    public void setLocalizacao(String localizacao){this.localizacao = nome;}
+    public void setNome(String nome){this.nome = nome;}
+    public void setLocalizacao(String localizacao){this.localizacao = localizacao;}
 
 }
