@@ -8,18 +8,23 @@ public record PesagemResponseDTO(
         Long id,
         Long animalId,
         double peso,
-        LocalDate dataPesagem
+        LocalDate dataPesagem,
+        Double gmdCalculado,
+        String aviso
 ) {
 
     public PesagemResponseDTO(Pesagem pesagem) {
-        this
-                (
-                        pesagem.getId(),
-                        pesagem.getAnimal().getId(),
-                        pesagem.getPeso(),
-                        pesagem.getData()
+        this(pesagem, null);
+    }
 
-                );
+    public PesagemResponseDTO(Pesagem pesagem, String aviso) {
+        this(
+                pesagem.getId(),
+                pesagem.getAnimal().getId(),
+                pesagem.getPesoKg(),
+                pesagem.getData(),
+                pesagem.getGmdCalculado(),
+                aviso
+        );
     }
 }
-

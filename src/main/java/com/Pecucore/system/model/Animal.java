@@ -13,6 +13,7 @@ public class Animal {
     private Long id;
 
     private int brinco;
+    @Column(updatable = false)
     private LocalDate dataNascimento;
     private double pesoAtual;
     private String sexo;

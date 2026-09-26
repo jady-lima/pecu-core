@@ -1,13 +1,19 @@
 package com.Pecucore.system.service;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.Pecucore.system.dto.AnimalRequestDTO;
+import com.Pecucore.system.dto.AnimalStatusRequestDTO;
+import com.Pecucore.system.evento.PesoAnimalAlteradoEvento;
 import com.Pecucore.system.model.Animal;
 import com.Pecucore.system.model.StatusAnimal;
 import com.Pecucore.system.model.Lote;
@@ -23,6 +29,10 @@ public class AnimalService {
     @Autowired
     private LoteRepository loteRepository;
 
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
+
+    @Transactional
     public Animal create(AnimalRequestDTO dados) {
 
         if (animalRepository.existsByBrinco(dados.brinco())) {
@@ -42,14 +52,20 @@ public class AnimalService {
 
         animal.setBrinco(dados.brinco());
         animal.setDataNascimento(dados.dataNascimento());
-        animal.setPesoAtual(dados.pesoAtual());
         animal.setSexo(dados.sexo());
         animal.setLote(lote);
         animal.setStatus(StatusAnimal.ATIVO);
 
-        return animalRepository.save(animal);
+        Animal animalCriado = animalRepository.save(animal);
+
+        eventPublisher.publishEvent(
+                new PesoAnimalAlteradoEvento(animalCriado.getId(), dados.pesoAtual(), LocalDate.now())
+        );
+
+        return animalCriado;
     }
 
+    @Transactional
     public Animal update(Long id, AnimalRequestDTO dados) {
 
         Animal animalExistente = animalRepository.findById(id)
@@ -58,6 +74,13 @@ public class AnimalService {
                         "Animal não encontrado"
                 ));
 
+
+        if (!Objects.equals(animalExistente.getDataNascimento(), dados.dataNascimento())) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "A data de nascimento do animal não pode ser alterada"
+            );
+        }
 
         if (animalRepository.existsByBrincoAndIdNot(dados.brinco(), id)) {
             throw new ResponseStatusException(
@@ -73,12 +96,28 @@ public class AnimalService {
                 ));
 
         animalExistente.setBrinco(dados.brinco());
-        animalExistente.setDataNascimento(dados.dataNascimento());
-        animalExistente.setPesoAtual(dados.pesoAtual());
         animalExistente.setSexo(dados.sexo());
         animalExistente.setLote(lote);
 
-        return animalRepository.save(animalExistente);
+        Animal animalAtualizado = animalRepository.save(animalExistente);
+
+        if (Double.compare(animalExistente.getPesoAtual(), dados.pesoAtual()) != 0) {
+            eventPublisher.publishEvent(
+                new PesoAnimalAlteradoEvento(id, dados.pesoAtual(), LocalDate.now())
+            );
+        }
+
+        return animalAtualizado;
+    }
+
+    @Transactional
+    public Animal updateStatus(Long id, AnimalStatusRequestDTO dados) {
+
+        Animal animal = getAnimalById(id);
+
+        animal.setStatus(dados.status());
+
+        return animalRepository.save(animal);
     }
 
     public List<Animal> getAllAnimais() {
@@ -94,14 +133,27 @@ public class AnimalService {
                 ));
     }
 
+    public Animal getAnimalAtivoById(Long id) {
+
+        Animal animal = getAnimalById(id);
+
+        if (animal.getStatus() != StatusAnimal.ATIVO) {
+            throw new ResponseStatusException(
+                HttpStatus.CONFLICT, 
+                "Não é possível registrar eventos para um animal que não está ativo"
+            );
+        }
+
+        return animal;
+    }
+
     public void deleteAnimal(Long id) {
 
-        Animal animalExistente = animalRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Animal não encontrado"
-                ));
+        getAnimalById(id);
 
-        animalRepository.delete(animalExistente);
+        throw new ResponseStatusException(
+                HttpStatus.CONFLICT,
+                "Não é possível excluir um animal, pois o histórico deve ser mantido"
+        );
     }
 }

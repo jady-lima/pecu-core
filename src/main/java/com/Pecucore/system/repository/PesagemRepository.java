@@ -7,6 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface PesagemRepository extends JpaRepository<Pesagem, Long> {
-    Optional<Pesagem> findTopByAnimalIdOrderByDataDesc(Long animalId);
-    List<Pesagem> findByAnimalIdOrderByDataAsc(Long animalId);
+    Optional<Pesagem> findTopByAnimalIdOrderByDataDescIdDesc(Long animalId);
+    List<Pesagem> findByAnimalIdOrderByDataAscIdAsc(Long animalId);
 }

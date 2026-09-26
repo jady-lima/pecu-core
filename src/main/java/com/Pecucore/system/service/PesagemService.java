@@ -1,13 +1,15 @@
 package com.Pecucore.system.service;
 
-import com.Pecucore.system.model.StatusAnimal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.Pecucore.system.dto.PesagemRequestDTO;
+import com.Pecucore.system.evento.PesoAnimalAlteradoEvento;
 import com.Pecucore.system.model.Animal;
 import com.Pecucore.system.model.Pesagem;
 import com.Pecucore.system.repository.AnimalRepository;
@@ -24,22 +26,26 @@ public class PesagemService {
     @Autowired
     private AnimalRepository animalRepository;
 
+    @Autowired
+    private AnimalService animalService;
+
+    @Autowired
+    private GmdService gmdService;
+
     @Value("${pesagem.intervalo-recomendado-dias}")
     private int intervaloRecomendadoDias;
 
-    public Pesagem create(PesagemRequestDTO dados) {
+    @EventListener
+    @Transactional
+    public void handlePesoAnimalAlterado(PesoAnimalAlteradoEvento evento) {
+        create(new PesagemRequestDTO(evento.animalId(), evento.pesoKg(), evento.data()));
+    }
 
-        Animal animal = animalRepository.findById(dados.animalId())
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Animal não encontrado"
-                ));
-        if (animal.getStatus() != StatusAnimal.ATIVO) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Não é possivel registrar pesagem para um animal que não está ativo"
-            );
-        }
+    @Transactional
+    public ResultadoPesagem create(PesagemRequestDTO dados) {
+
+        Animal animal = animalService.getAnimalAtivoById(dados.animalId());
+
         if (animal.getDataNascimento() != null && dados.dataPesagem().isBefore(animal.getDataNascimento())) {
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
@@ -47,7 +53,7 @@ public class PesagemService {
             );
         }
 
-        Pesagem ultimaPesagem = pesagemRepository.findTopByAnimalIdOrderByDataDesc(dados.animalId()).orElse(null);
+        Pesagem ultimaPesagem = pesagemRepository.findTopByAnimalIdOrderByDataDescIdDesc(dados.animalId()).orElse(null);
 
         if(ultimaPesagem != null && dados.dataPesagem().isBefore(ultimaPesagem.getData())){
             throw new ResponseStatusException(
@@ -56,33 +62,25 @@ public class PesagemService {
             );
         }
 
-        double variacaoPeso = 0;
-        if(ultimaPesagem !=null){
-            variacaoPeso = dados.pesoAtual() - ultimaPesagem.getPeso();
-        }
-
-        long diasEntrePesagens = 0;
-        double gmd = 0;
+        String aviso = null;
         if(ultimaPesagem !=null) {
-            diasEntrePesagens = ChronoUnit.DAYS.between(
+            long diasEntrePesagens = ChronoUnit.DAYS.between(
                     ultimaPesagem.getData(),
                     dados.dataPesagem()
-
             );
 
             if(diasEntrePesagens > intervaloRecomendadoDias){
-                System.out.println("Aviso: O intervalo recomendado entre as pesagens foi ultrapassado");
-            }
-
-            if (diasEntrePesagens > 0) {
-
-                gmd = variacaoPeso / diasEntrePesagens;
+                aviso = "O intervalo desde a última pesagem (" + diasEntrePesagens
+                        + " dias) ultrapassa o recomendado (" + intervaloRecomendadoDias + " dias)";
             }
         }
 
+        Double gmd = gmdService.calculateGmd(ultimaPesagem, dados.pesoAtual(), dados.dataPesagem());
+
         Pesagem pesagem = new Pesagem();
 
-        pesagem.setPeso(dados.pesoAtual());
+        pesagem.setPesoKg(dados.pesoAtual());
+        pesagem.setGmdCalculado(gmd);
         pesagem.setData(dados.dataPesagem());
         pesagem.setAnimal(animal);
 
@@ -91,8 +89,9 @@ public class PesagemService {
         pesagemRepository.save(pesagem);
         animalRepository.save(animal);
 
-        return pesagem;
+        return new ResultadoPesagem(pesagem, aviso);
     }
+    
     public List<Pesagem> getHistorico(Long animalId) {
 
         if (!animalRepository.existsById(animalId)) {
@@ -102,6 +101,6 @@ public class PesagemService {
             );
         }
 
-        return pesagemRepository.findByAnimalIdOrderByDataAsc(animalId);
+        return pesagemRepository.findByAnimalIdOrderByDataAscIdAsc(animalId);
     }
 }

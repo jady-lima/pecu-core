@@ -5,6 +5,7 @@ import com.Pecucore.system.dto.PesagemRequestDTO;
 import com.Pecucore.system.dto.PesagemResponseDTO;
 import com.Pecucore.system.model.Pesagem;
 import com.Pecucore.system.service.PesagemService;
+import com.Pecucore.system.service.ResultadoPesagem;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,8 +23,9 @@ public class PesagemController {
 
     @PostMapping
     public ResponseEntity<PesagemResponseDTO> create(@RequestBody @Valid PesagemRequestDTO dados) {
-        Pesagem pesagemCriada = pesagemService.create(dados);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new PesagemResponseDTO(pesagemCriada));
+        ResultadoPesagem resultado = pesagemService.create(dados);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new PesagemResponseDTO(resultado.pesagem(), resultado.aviso()));
     }
 
     @GetMapping("/animal/{animalId}")

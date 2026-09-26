@@ -6,11 +6,22 @@ import jakarta.persistence.*;
 @Table(name="pesagem")
 public class Pesagem extends RegistroAnimal {
 
-    private double peso;
+    private double pesoKg;
+    private Double gmdCalculado;
 
-    public double getPeso() {return peso;}
+    public double getPesoKg() {
+        return pesoKg;
+    }
 
-    public void setPeso(double peso) {
-        this.peso = peso;
+    public Double getGmdCalculado() {
+        return gmdCalculado;
+    }
+
+    public void setPesoKg(double pesoKg) {
+        this.pesoKg = pesoKg;
+    }
+
+    public void setGmdCalculado(Double gmdCalculado) {
+        this.gmdCalculado = gmdCalculado;
     }
 }

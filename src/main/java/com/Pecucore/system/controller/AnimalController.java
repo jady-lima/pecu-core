@@ -2,6 +2,7 @@ package com.Pecucore.system.controller;
 
 import com.Pecucore.system.dto.AnimalRequestDTO;
 import com.Pecucore.system.dto.AnimalResponseDTO;
+import com.Pecucore.system.dto.AnimalStatusRequestDTO;
 import com.Pecucore.system.model.Animal;
 import com.Pecucore.system.service.AnimalService;
 
@@ -39,6 +40,18 @@ public class AnimalController {
             @RequestBody @Valid AnimalRequestDTO dados) {
 
         Animal animalAtualizado = animalService.update(id, dados);
+
+        return ResponseEntity.ok(
+                new AnimalResponseDTO(animalAtualizado)
+        );
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<AnimalResponseDTO> updateStatusAnimal(
+            @PathVariable Long id,
+            @RequestBody @Valid AnimalStatusRequestDTO dados) {
+
+        Animal animalAtualizado = animalService.updateStatus(id, dados);
 
         return ResponseEntity.ok(
                 new AnimalResponseDTO(animalAtualizado)
