@@ -7,8 +7,8 @@ import jakarta.persistence.*;
 @Table(name = "lote")
 public class Lote {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
     private int numero;
     @Enumerated(EnumType.STRING)
@@ -24,7 +24,7 @@ public class Lote {
     public FinalidadeLote getFinalidade(){return finalidade;}
     public LocalDate getDataCriacao(){return dataCriacao;}
     public int getCapacidade(){return capacidade;}
-    public long getId(){return id;}
+    public Long getId(){return id;}
     public Propriedade getPropriedade() {return propriedade;}
 
 
@@ -46,7 +46,4 @@ public class Lote {
     public void setPropriedade(Propriedade propriedade) {
         this.propriedade = propriedade;
     }
-
-
-
 }

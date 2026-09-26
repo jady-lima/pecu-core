@@ -7,15 +7,15 @@ import jakarta.persistence.*;
 
 public class Propriedade {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
     private String nome;
     private String localizacao;
 
     public String getNome(){return nome;}
     public String getLocalizacao(){return localizacao;}
-    public long getId(){return id;}
+    public Long getId(){return id;}
 
     public void setNome(String nome){this.nome = nome;}
     public void setLocalizacao(String localizacao){this.localizacao = localizacao;}

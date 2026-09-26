@@ -1,17 +1,13 @@
 package com.Pecucore.system.model;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.time.LocalDate;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "registro_animal")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class RegistroAnimal implements Serializable {
+public abstract class RegistroAnimal {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
