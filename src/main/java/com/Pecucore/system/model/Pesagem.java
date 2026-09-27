@@ -1,43 +1,27 @@
 package com.Pecucore.system.model;
 
-import java.time.LocalDate;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name="pesagem")
-public class Pesagem {
+public class Pesagem extends RegistroAnimal {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private double pesoKg;
+    private Double gmdCalculado;
 
-    private LocalDate dataPesagem;
-    private double peso;
-
-    @ManyToOne
-    @JoinColumn(name = "animal_id")
-    private Animal animal;
-
-
-
-
-    public Long getId() {return id;}
-
-    public LocalDate getDataPesagem() {return dataPesagem;}
-
-    public double getPeso() {return peso;}
-
-    public Animal getAnimal() {return animal;}
-
-    public void setDataPesagem(LocalDate dataPesagem) {
-        this.dataPesagem = dataPesagem;
+    public double getPesoKg() {
+        return pesoKg;
     }
 
-    public void setPeso(double peso) {
-        this.peso = peso;
+    public Double getGmdCalculado() {
+        return gmdCalculado;
     }
 
-    public void setAnimal(Animal animal) {
-        this.animal = animal;
+    public void setPesoKg(double pesoKg) {
+        this.pesoKg = pesoKg;
+    }
+
+    public void setGmdCalculado(Double gmdCalculado) {
+        this.gmdCalculado = gmdCalculado;
     }
 }

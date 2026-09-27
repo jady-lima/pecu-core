@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -17,7 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import com.Pecucore.system.config.SecurityFilter;
+import com.Pecucore.system.model.Perfil;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,12 +36,27 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        String admin = Perfil.ADMIN.name();
+        String produtor = Perfil.PRODUTOR.name();
+        String veterinario = Perfil.VETERINARIO.name();
+
         return http.csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/auth/login", "/","/swagger-ui/**","/swagger-ui.html", "/v3/api-docs/**").permitAll()
-                .requestMatchers("/usuarios/**").hasAuthority("ADMIN")
+                .requestMatchers("/usuarios/**").hasAuthority(admin)
+
+                .requestMatchers(HttpMethod.GET, "/propriedades/**", "/lotes/**", "/animais/**", "/pesagens/**").authenticated()
+
+                .requestMatchers("/propriedades/**", "/lotes/**").hasAnyAuthority(admin, produtor)
+
+                .requestMatchers(HttpMethod.DELETE, "/animais/**").hasAnyAuthority(admin, produtor)
+                .requestMatchers(HttpMethod.POST, "/animais").hasAnyAuthority(admin, produtor, veterinario)
+                .requestMatchers(HttpMethod.PUT, "/animais/**").hasAnyAuthority(admin, produtor, veterinario)
+
+                .requestMatchers(HttpMethod.POST, "/pesagens").hasAnyAuthority(admin, produtor, veterinario)
+
                 .anyRequest().authenticated()
             )
             .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

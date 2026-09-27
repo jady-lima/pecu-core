@@ -2,6 +2,7 @@ package com.Pecucore.system.model;
 
 import jakarta.persistence.*;
 
+import java.io.Serial;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -13,8 +14,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Entity
 @Table(name="usuario")
 public class Usuario implements UserDetails{
+
+    @Serial
+    private static final long serialVersionUID = 1L;
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(nullable = false, length = 100)

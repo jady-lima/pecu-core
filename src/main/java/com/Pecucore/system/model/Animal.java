@@ -2,21 +2,18 @@ package com.Pecucore.system.model;
 
 import jakarta.persistence.*;
 
-import java.io.Serial;
-import java.io.Serializable;
 import java.time.LocalDate;
 
 @Entity
 @Table(name="animal")
-public class Animal implements Serializable {
+public class Animal {
 
-    @Serial
-    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private int brinco;
+    @Column(updatable = false)
     private LocalDate dataNascimento;
     private double pesoAtual;
     private String sexo;
@@ -27,8 +24,6 @@ public class Animal implements Serializable {
 
     @Enumerated(EnumType.STRING)
     private StatusAnimal status;
-
-
 
     public Long getId(){return id;}
 

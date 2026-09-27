@@ -1,6 +1,7 @@
 package com.Pecucore.system.dto;
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Positive;
 
 import java.time.LocalDate;
@@ -11,6 +12,7 @@ public record AnimalRequestDTO(
         Integer brinco,
 
         @NotNull(message = "A data de nascimento do animal precisa ser informada!!")
+        @PastOrPresent(message = "A data de nascimento do animal não pode ser uma data futura")
         LocalDate dataNascimento,
 
         @NotNull(message = "O peso precisa ser informado!!")

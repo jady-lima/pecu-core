@@ -6,20 +6,25 @@ import java.time.LocalDate;
 
 public record PesagemResponseDTO(
         Long id,
-        Long animalId,
+        int brinco,
         double peso,
-        LocalDate dataPesagem
+        LocalDate dataPesagem,
+        Double gmdCalculado,
+        String aviso
 ) {
 
     public PesagemResponseDTO(Pesagem pesagem) {
-        this
-                (
-                        pesagem.getId(),
-                        pesagem.getAnimal().getId(),
-                        pesagem.getPeso(),
-                        pesagem.getDataPesagem()
+        this(pesagem, null);
+    }
 
-                );
+    public PesagemResponseDTO(Pesagem pesagem, String aviso) {
+        this(
+                pesagem.getId(),
+                pesagem.getAnimal().getBrinco(),
+                pesagem.getPesoKg(),
+                pesagem.getData(),
+                pesagem.getGmdCalculado(),
+                aviso
+        );
     }
 }
-
