@@ -32,6 +32,9 @@ public class AnimalService {
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
+    @Autowired
+    private CarenciaService carenciaService;
+
     @Transactional
     public Animal create(AnimalRequestDTO dados) {
 
@@ -114,6 +117,13 @@ public class AnimalService {
     public Animal updateStatus(Long id, AnimalStatusRequestDTO dados) {
 
         Animal animal = getAnimalById(id);
+
+        if (dados.status() == StatusAnimal.ABATIDO && carenciaService.estaEmCarencia(id)) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "O animal está em período de carência e não pode ser abatido"
+            );
+        }
 
         animal.setStatus(dados.status());
 
