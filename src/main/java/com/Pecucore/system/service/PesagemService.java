@@ -51,12 +51,7 @@ public class PesagemService {
 
     private ResultadoPesagem registrar(Animal animal, double pesoKg, LocalDate dataPesagem) {
 
-        if (animal.getDataNascimento() != null && dataPesagem.isBefore(animal.getDataNascimento())) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "A data da pesagem não pode ser anterior à data de nascimento do animal"
-            );
-        }
+        animalService.validarDataRegistro(animal, dataPesagem);
 
         Pesagem ultimaPesagem = pesagemRepository.findTopByAnimalIdOrderByDataDescIdDesc(animal.getId()).orElse(null);
 

@@ -150,6 +150,20 @@ public class AnimalService {
         return validarAtivo(getAnimalByBrinco(brinco));
     }
 
+    public List<Animal> getAnimaisAtivosByLoteId(Long loteId) {
+        return animalRepository.findByLoteIdAndStatus(loteId, StatusAnimal.ATIVO);
+    }
+
+    public void validarDataRegistro(Animal animal, LocalDate data) {
+
+        if (animal.getDataNascimento() != null && data.isBefore(animal.getDataNascimento())) {
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
+                    "A data do registro não pode ser anterior à data de nascimento do animal"
+            );
+        }
+    }
+
     private Animal validarAtivo(Animal animal) {
 
         if (animal.getStatus() != StatusAnimal.ATIVO) {

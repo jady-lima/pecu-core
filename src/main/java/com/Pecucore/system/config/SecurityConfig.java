@@ -47,7 +47,7 @@ public class SecurityConfig {
                 .requestMatchers("/auth/login", "/","/swagger-ui/**","/swagger-ui.html", "/v3/api-docs/**").permitAll()
                 .requestMatchers("/usuarios/**").hasAuthority(admin)
 
-                .requestMatchers(HttpMethod.GET, "/propriedades/**", "/lotes/**", "/animais/**", "/pesagens/**").authenticated()
+                .requestMatchers(HttpMethod.GET, "/propriedades/**", "/lotes/**", "/animais/**", "/pesagens/**", "/alimentacoes/**").authenticated()
 
                 .requestMatchers("/propriedades/**", "/lotes/**").hasAnyAuthority(admin, produtor)
 
@@ -56,6 +56,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/animais/**").hasAnyAuthority(admin, produtor, veterinario)
 
                 .requestMatchers(HttpMethod.POST, "/pesagens").hasAnyAuthority(admin, produtor, veterinario)
+
+                .requestMatchers(HttpMethod.POST, "/alimentacoes/**").hasAnyAuthority(admin, produtor, veterinario)
 
                 .anyRequest().authenticated()
             )
