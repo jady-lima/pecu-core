@@ -10,7 +10,8 @@ public record AlimentacaoResponseDTO(
         int brinco,
         TipoAlimentacao tipo,
         double quantidade,
-        LocalDate data
+        LocalDate data,
+        Double valor
 ) {
 
     public AlimentacaoResponseDTO(Alimentacao alimentacao) {
@@ -19,7 +20,8 @@ public record AlimentacaoResponseDTO(
             alimentacao.getAnimal().getBrinco(),
             alimentacao.getTipo(),
             alimentacao.getQuantidade(),
-            alimentacao.getData()
+            alimentacao.getData(),
+            alimentacao.getValor()
         );
     }
 }

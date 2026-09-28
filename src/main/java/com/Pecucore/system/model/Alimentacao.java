@@ -11,12 +11,22 @@ public class Alimentacao extends RegistroAnimal {
 
     private double quantidade;
 
+    private Double valor;
+
     public TipoAlimentacao getTipo() {
         return tipo;
     }
 
     public double getQuantidade() {
         return quantidade;
+    }
+
+    public Double getValor() {
+        return valor;
+    }
+
+    public void setValor(Double valor) {
+        this.valor = valor;
     }
 
     public void setTipo(TipoAlimentacao tipo) {
