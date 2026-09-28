@@ -28,6 +28,9 @@ public record MedicamentoRequestDTO(
 
         @NotNull(message = "A data da aplicação precisa ser informada.")
         @PastOrPresent(message = "A data da aplicação não pode ser futura.")
-        LocalDate data
+        LocalDate data,
+
+        @Positive(message = "O valor deve ser maior que zero.")
+        Double valor
 ) {
 }

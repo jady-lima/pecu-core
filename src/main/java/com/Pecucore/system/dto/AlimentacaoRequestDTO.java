@@ -8,18 +8,21 @@ import jakarta.validation.constraints.Positive;
 import java.time.LocalDate;
 
 public record AlimentacaoRequestDTO(
-        @NotNull(message = "O brinco do animal precisa ser informado!!")
+        @NotNull(message = "O brinco do animal precisa ser informado.")
         Integer brinco,
 
-        @NotNull(message = "O tipo de alimentação precisa ser informado!!")
+        @NotNull(message = "O tipo de alimentação precisa ser informado.")
         TipoAlimentacao tipo,
 
-        @NotNull(message = "A quantidade precisa ser informada!!")
+        @NotNull(message = "A quantidade precisa ser informada.")
         @Positive(message = "A quantidade deve ser maior que zero.")
         Double quantidade,
 
-        @NotNull(message = "A data da alimentação precisa ser informada!!")
+        @NotNull(message = "A data da alimentação precisa ser informada.")
         @PastOrPresent(message = "A data da alimentação não pode ser uma data futura")
-        LocalDate data
+        LocalDate data,
+
+        @Positive(message = "O valor deve ser maior que zero.")
+        Double valor
 ) {
 }

@@ -1,14 +1,11 @@
 package com.Pecucore.system.service;
 
+import com.Pecucore.system.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.Pecucore.system.dto.VacinacaoRequestDTO;
-import com.Pecucore.system.model.Animal;
-import com.Pecucore.system.model.Usuario;
-import com.Pecucore.system.model.Vacina;
-import com.Pecucore.system.model.Vacinacao;
 import com.Pecucore.system.repository.VacinacaoRepository;
 import java.util.List;
 
@@ -29,6 +26,9 @@ public class VacinacaoService {
 
     @Autowired
     private CalculadoraCarencia calculadoraCarencia;
+
+    @Autowired
+    private CustoService custoService;
 
     @Transactional
     public Vacinacao create(VacinacaoRequestDTO dados, Usuario usuarioLogado) {
@@ -54,7 +54,18 @@ public class VacinacaoService {
             vacinacao.setDataProximaDose(dados.data().plusDays(vacina.getIntervaloDoseDias()));
         }
 
-        return vacinacaoRepository.save(vacinacao);
+        Vacinacao vacinacaoSalva = vacinacaoRepository.save(vacinacao);
+
+        if (dados.valor() != null) {
+            custoService.registrarAutomatico(
+                    TipoCusto.VACINA,
+                    dados.valor(),
+                    dados.data(),
+                    animal
+            );
+        }
+
+        return vacinacaoSalva;
     }
 
     public List<Vacinacao> getHistorico(int brinco) {

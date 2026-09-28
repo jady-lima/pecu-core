@@ -20,6 +20,9 @@ public record AlimentacaoLoteRequestDTO(
 
         @NotNull(message = "A data da alimentação precisa ser informada!!")
         @PastOrPresent(message = "A data da alimentação não pode ser uma data futura")
-        LocalDate data
+        LocalDate data,
+
+        @Positive(message = "O valor deve ser maior que zero.")
+        Double valor
 ) {
 }

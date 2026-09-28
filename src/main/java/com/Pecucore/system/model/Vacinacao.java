@@ -34,6 +34,8 @@ public class Vacinacao extends RegistroAnimal {
     @JoinColumn(name = "usuario_registro_id", nullable = false)
     private Usuario usuarioRegistro;
 
+    private Double valor;
+
     public Vacina getVacina() {
         return vacina;
     }
@@ -96,5 +98,13 @@ public class Vacinacao extends RegistroAnimal {
 
     public void setUsuarioRegistro(Usuario usuarioRegistro) {
         this.usuarioRegistro = usuarioRegistro;
+    }
+
+    public Double getValor() {
+        return valor;
+    }
+
+    public void setValor(Double valor) {
+        this.valor = valor;
     }
 }

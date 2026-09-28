@@ -12,7 +12,8 @@ public record MedicamentoResponseDTO(
         double dosagem,
         int carenciaDias,
         LocalDate data,
-        LocalDate dataFimCarencia
+        LocalDate dataFimCarencia,
+        Double valor
 ) {
 
     public MedicamentoResponseDTO(Medicamento medicamento) {
@@ -24,7 +25,8 @@ public record MedicamentoResponseDTO(
                 medicamento.getDosagem(),
                 medicamento.getCarenciaDias(),
                 medicamento.getData(),
-                medicamento.getDataFimCarencia()
+                medicamento.getDataFimCarencia(),
+                medicamento.getValor()
         );
     }
 }

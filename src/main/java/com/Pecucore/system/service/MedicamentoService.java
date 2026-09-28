@@ -3,6 +3,7 @@ package com.Pecucore.system.service;
 import com.Pecucore.system.dto.MedicamentoRequestDTO;
 import com.Pecucore.system.model.Animal;
 import com.Pecucore.system.model.Medicamento;
+import com.Pecucore.system.model.TipoCusto;
 import com.Pecucore.system.repository.MedicamentoRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,9 @@ public class MedicamentoService {
 
     @Autowired
     private CalculadoraCarencia calculadoraCarencia;
+
+    @Autowired
+    private CustoService custoService;
 
     @Transactional
     public Medicamento create(MedicamentoRequestDTO dados) {
@@ -45,7 +49,18 @@ public class MedicamentoService {
                 )
         );
 
-        return medicamentoRepository.save(medicamento);
+        Medicamento medicamentoSalvo = medicamentoRepository.save(medicamento);
+
+        if (dados.valor() != null) {
+            custoService.registrarAutomatico(
+                    TipoCusto.MEDICAMENTO,
+                    dados.valor(),
+                    dados.data(),
+                    animal
+            );
+        }
+
+        return medicamentoSalvo;
     }
 
     public List<Medicamento> getHistorico(int brinco) {
