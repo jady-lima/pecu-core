@@ -31,6 +31,9 @@ public record VacinacaoRequestDTO(
         Double doseAplicada,
 
         @Size(max = 500, message = "As observações devem ter no máximo 500 caracteres")
-        String observacoes
+        String observacoes,
+
+        @Positive(message = "O valor deve ser maior que zero.")
+        Double valor
 ) {
 }

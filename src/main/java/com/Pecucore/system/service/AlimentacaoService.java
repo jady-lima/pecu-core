@@ -1,5 +1,6 @@
 package com.Pecucore.system.service;
 
+import com.Pecucore.system.model.TipoCusto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -27,10 +28,13 @@ public class AlimentacaoService {
     @Autowired
     private LoteService loteService;
 
+    @Autowired
+    private CustoService custoService;
+
     @Transactional
     public Alimentacao create(AlimentacaoRequestDTO dados) {
         Animal animal = animalService.getAnimalAtivoByBrinco(dados.brinco());
-        return registrar(animal, dados.tipo(), dados.quantidade(), dados.data());
+        return registrar(animal, dados.tipo(), dados.quantidade(), dados.data(), dados.valor());
     }
 
     @Transactional
@@ -43,7 +47,7 @@ public class AlimentacaoService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "O lote não possui animais ativos");
         }
 
-        return animais.stream().map(animal -> registrar(animal, dados.tipo(), dados.quantidade(), dados.data())).toList();
+        return animais.stream().map(animal -> registrar(animal, dados.tipo(), dados.quantidade(), dados.data(), dados.valor())).toList();
     }
 
     public List<Alimentacao> getHistorico(int brinco) {
@@ -51,15 +55,27 @@ public class AlimentacaoService {
         return alimentacaoRepository.findByAnimalIdOrderByDataAscIdAsc(animal.getId());
     }
 
-    private Alimentacao registrar(Animal animal, TipoAlimentacao tipo, double quantidade, LocalDate data) {
+    private Alimentacao registrar(Animal animal, TipoAlimentacao tipo, double quantidade, LocalDate data, Double valor) {
         animalService.validarDataRegistro(animal, data);
 
         Alimentacao alimentacao = new Alimentacao();
         alimentacao.setTipo(tipo);
         alimentacao.setQuantidade(quantidade);
+        alimentacao.setValor(valor);
         alimentacao.setData(data);
         alimentacao.setAnimal(animal);
 
-        return alimentacaoRepository.save(alimentacao);
+        Alimentacao alimentacaoSalva = alimentacaoRepository.save(alimentacao);
+
+        if (valor != null) {
+            custoService.registrarAutomatico(
+                    TipoCusto.ALIMENTACAO,
+                    valor,
+                    data,
+                    animal
+            );
+        }
+
+        return alimentacaoSalva;
     }
 }

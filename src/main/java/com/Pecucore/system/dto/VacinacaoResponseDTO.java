@@ -17,7 +17,8 @@ public record VacinacaoResponseDTO(
         String observacoes,
         Long aplicadorId,
         String aplicador,
-        String registradoPor
+        String registradoPor,
+        Double valor
 ) {
 
     public VacinacaoResponseDTO(Vacinacao vacinacao) {
@@ -34,7 +35,8 @@ public record VacinacaoResponseDTO(
             vacinacao.getObservacoes(),
             vacinacao.getUsuarioAplicador().getId(),
             vacinacao.getUsuarioAplicador().getNome(),
-            vacinacao.getUsuarioRegistro().getNome()
+            vacinacao.getUsuarioRegistro().getNome(),
+            vacinacao.getValor()
         );
     }
 }

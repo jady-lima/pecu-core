@@ -23,6 +23,8 @@ public class Medicamento extends RegistroAnimal{
     @Column(nullable = false)
     private LocalDate dataFimCarencia;
 
+    private Double valor;
+
     public String getNome() {
         return nome;
     }
@@ -41,6 +43,10 @@ public class Medicamento extends RegistroAnimal{
 
     public LocalDate getDataFimCarencia() {
         return dataFimCarencia;
+    }
+
+    public Double getValor() {
+        return valor;
     }
 
 
@@ -62,5 +68,9 @@ public class Medicamento extends RegistroAnimal{
 
     public void setDosagem(Double dosagem) {
         this.dosagem = dosagem;
+    }
+
+    public void setValor(Double valor) {
+        this.valor = valor;
     }
 }

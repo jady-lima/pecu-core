@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
+
 import java.util.List;
 
 @Service
@@ -70,6 +72,24 @@ public class CustoService {
 
             custo.setPropriedade(propriedade);
         }
+
+        return custoRepository.save(custo);
+    }
+
+    @Transactional
+    public Custo registrarAutomatico(
+            TipoCusto tipo,
+            double valor,
+            LocalDate data,
+            Animal animal) {
+
+        Custo custo = new Custo();
+
+        custo.setTipo(tipo);
+        custo.setOrigem(OrigemCusto.AUTOMATICO);
+        custo.setValor(valor);
+        custo.setData(data);
+        custo.setAnimal(animal);
 
         return custoRepository.save(custo);
     }
