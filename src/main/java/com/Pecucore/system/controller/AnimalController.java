@@ -3,6 +3,7 @@ package com.Pecucore.system.controller;
 import com.Pecucore.system.dto.AnimalRequestDTO;
 import com.Pecucore.system.dto.AnimalResponseDTO;
 import com.Pecucore.system.dto.AnimalStatusRequestDTO;
+import com.Pecucore.system.dto.FichaAnimalResponseDTO;
 import com.Pecucore.system.model.Animal;
 import com.Pecucore.system.service.AnimalService;
 
@@ -70,6 +71,17 @@ public class AnimalController {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(dtos);
+    }
+
+    @GetMapping("/{id}/ficha")
+    public ResponseEntity<FichaAnimalResponseDTO> getFichaAnimal(
+            @PathVariable Long id) {
+
+        Animal animal = animalService.getAnimalById(id);
+
+        return ResponseEntity.ok(
+                new FichaAnimalResponseDTO(animal)
+        );
     }
 
     @GetMapping("/{id}")
